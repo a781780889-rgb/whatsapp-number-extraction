@@ -34,6 +34,8 @@ const envSchema = z.object({
   RATE_LIMIT_WINDOW_MS: z.coerce.number().int().positive().default(900_000),
   RATE_LIMIT_MAX: z.coerce.number().int().positive().default(300),
   AUTH_RATE_LIMIT_MAX: z.coerce.number().int().positive().default(10),
+  WHATSAPP_API_VERSION: z.string().default('v23.0'),
+  WHATSAPP_GRAPH_API_BASE_URL: z.string().url().default('https://graph.facebook.com'),
 });
 
 function loadEnv() {

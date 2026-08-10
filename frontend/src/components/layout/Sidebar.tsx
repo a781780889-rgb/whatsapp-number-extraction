@@ -1,10 +1,10 @@
 import { motion } from 'framer-motion';
-import { Activity, Hash, LayoutDashboard, Menu, Users, X } from 'lucide-react';
+import { Activity, Megaphone, Hash, LayoutDashboard, Menu, Users, X } from 'lucide-react';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { useSocket } from '../../contexts/SocketContext';
 import { useDashboardData } from '../../contexts/DashboardDataContext';
 
-export type DashboardTab = 'overview' | 'accounts' | 'numbers';
+export type DashboardTab = 'overview' | 'accounts' | 'numbers' | 'private-publishing';
 
 interface SidebarProps {
   active: DashboardTab;
@@ -23,6 +23,7 @@ export function Sidebar({ active, onChange, open, onClose }: SidebarProps) {
   const items: Array<{ id: DashboardTab; label: string; description: string; icon: typeof Activity; count?: number }> = [
     { id: 'accounts', label: t('nav_accounts'), description: isRtl ? 'إدارة حسابات واتساب' : 'Manage WhatsApp accounts', icon: Users, count: accounts.length },
     { id: 'numbers', label: t('nav_numbers'), description: isRtl ? 'تصفح البيانات المستخرجة' : 'Browse extracted data', icon: Hash, count: overview?.totalExtractedNumbers ?? 0 },
+    { id: 'private-publishing', label: 'النشر ع الخاص', description: 'حملات WhatsApp Business', icon: Megaphone },
     { id: 'overview', label: t('nav_overview'), description: isRtl ? 'متابعة النشاط والعمليات' : 'Track activity and jobs', icon: LayoutDashboard },
   ];
 

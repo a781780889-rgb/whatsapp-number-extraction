@@ -7,6 +7,7 @@ import { useLanguage } from '../contexts/LanguageContext';
 import { OverviewPanel } from '../components/dashboard/OverviewPanel';
 import { AccountsPanel } from '../components/accounts/AccountsPanel';
 import { NumbersPanel } from '../components/numbers/NumbersPanel';
+import { PrivatePublishingPanel } from '../components/private-publishing/PrivatePublishingPanel';
 
 export function DashboardPage() {
   const [tab, setTab] = useState<DashboardTab>('overview');
@@ -43,6 +44,7 @@ export function DashboardPage() {
             {tab === 'overview' && <OverviewPanel />}
             {tab === 'accounts' && <AccountsPanel />}
             {tab === 'numbers' && <NumbersPanel />}
+            {tab === 'private-publishing' && <PrivatePublishingPanel />}
           </motion.div>
         </AnimatePresence>
         </main>
