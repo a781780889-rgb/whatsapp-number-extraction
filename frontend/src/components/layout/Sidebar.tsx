@@ -21,9 +21,9 @@ export function Sidebar({ active, onChange, open, onClose }: SidebarProps) {
   const position = isRtl ? 'right-0' : 'left-0';
 
   const items: Array<{ id: DashboardTab; label: string; description: string; icon: typeof Activity; count?: number }> = [
-    { id: 'overview', label: t('nav_overview'), description: isRtl ? 'متابعة النشاط والعمليات' : 'Track activity and jobs', icon: LayoutDashboard },
     { id: 'accounts', label: t('nav_accounts'), description: isRtl ? 'إدارة حسابات واتساب' : 'Manage WhatsApp accounts', icon: Users, count: accounts.length },
     { id: 'numbers', label: t('nav_numbers'), description: isRtl ? 'تصفح البيانات المستخرجة' : 'Browse extracted data', icon: Hash, count: overview?.totalExtractedNumbers ?? 0 },
+    { id: 'overview', label: t('nav_overview'), description: isRtl ? 'متابعة النشاط والعمليات' : 'Track activity and jobs', icon: LayoutDashboard },
   ];
 
   const handleChange = (tab: DashboardTab) => {

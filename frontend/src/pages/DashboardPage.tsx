@@ -25,11 +25,11 @@ export function DashboardPage() {
             <button
               onClick={() => setSidebarOpen(true)}
               className="focus-ring flex h-10 w-10 items-center justify-center rounded-xl bg-ink-950 text-paper-50 shadow-lg shadow-ink-950/10 dark:bg-paper-50 dark:text-ink-950"
-              aria-label={isRtl ? 'فتح القائمة الجانبية' : 'Open sidebar'}
+              aria-label={isRtl ? 'فتح القائمة' : 'Open menu'}
             >
               <Menu className="h-5 w-5" />
             </button>
-            <span className="text-sm font-bold text-ink-700 dark:text-paper-200">{t('nav_overview')}</span>
+            <span className="text-sm font-bold text-ink-700 dark:text-paper-200">{isRtl ? 'القائمة' : 'Menu'}</span>
           </div>
 
         <AnimatePresence mode="wait">
