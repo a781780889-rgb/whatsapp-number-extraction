@@ -7,6 +7,7 @@ import { validate } from "../../../shared/middleware/validate.middleware.js";
 import * as c from "../controllers/publishing.controller.js";
 import {
   createAccountSchema,
+  embeddedSignupSchema,
   createCampaignSchema,
   deliveriesQuerySchema,
   idParamSchema,
@@ -16,6 +17,13 @@ privatePublishingRouter.use(requireAuth);
 privatePublishingRouter.get("/overview", c.overview);
 privatePublishingRouter.get("/health", c.health);
 privatePublishingRouter.get("/accounts", c.listAccounts);
+privatePublishingRouter.get("/embedded-signup/config", c.embeddedSignupConfig);
+privatePublishingRouter.post(
+  "/accounts/embedded-signup",
+  requireRole("admin", "operator"),
+  validate({ body: embeddedSignupSchema }),
+  c.completeEmbeddedSignup,
+);
 privatePublishingRouter.post(
   "/accounts",
   requireRole("admin", "operator"),

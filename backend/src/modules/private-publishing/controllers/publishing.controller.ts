@@ -1,6 +1,8 @@
 import type { Request, Response } from "express";
 import { and, desc, eq, sql } from "drizzle-orm";
 import { db } from "../../../db/index.js";
+import { env } from "../../../config/env.js";
+import { encryptSecret } from "../../number-extraction/services/crypto.service.js";
 import {
   extractedNumbers,
   publishingAccounts,
@@ -10,8 +12,6 @@ import {
   publishingDeliveries,
   publishingTemplates,
 } from "../../../db/schema.js";
-import { env } from "../../../config/env.js";
-import { encryptSecret } from "../../number-extraction/services/crypto.service.js";
 
 export async function overview(_req: Request, res: Response) {
   const [numbers, contacted, accounts, campaigns, pending, sent, failed] =
@@ -213,4 +213,24 @@ export async function health(_req: Request, res: Response) {
       optInRequired: true,
     },
   });
+}
+
+export async function embeddedSignupConfig(_req: Request, res: Response) {
+  res.json({ success: true, data: { appId: env.META_APP_ID, configId: env.META_EMBEDDED_SIGNUP_CONFIG_ID, apiVersion: env.WHATSAPP_API_VERSION, configured: Boolean(env.META_APP_ID && env.META_EMBEDDED_SIGNUP_CONFIG_ID) } });
+}
+
+export async function completeEmbeddedSignup(req: Request, res: Response) {
+  if (!env.META_APP_ID || !env.META_APP_SECRET) {
+    return res.status(503).json({ success: false, error: { message: "Meta Embedded Signup غير مهيأ على الخادم" } });
+  }
+  const body = req.body as { code:string; name:string; phoneNumber:string; phoneNumberId:string; businessAccountId:string; dailyLimit:number; priority:number };
+  const tokenUrl = new URL(`${env.WHATSAPP_GRAPH_API_BASE_URL}/${env.WHATSAPP_API_VERSION}/oauth/access_token`);
+  tokenUrl.searchParams.set("client_id", env.META_APP_ID);
+  tokenUrl.searchParams.set("client_secret", env.META_APP_SECRET);
+  tokenUrl.searchParams.set("code", body.code);
+  const tokenResponse = await fetch(tokenUrl);
+  const tokenPayload = await tokenResponse.json() as { access_token?: string; error?: { message?: string } };
+  if (!tokenResponse.ok || !tokenPayload.access_token) return res.status(502).json({ success:false, error:{ message: tokenPayload.error?.message ?? "تعذر إكمال مصادقة Meta" } });
+  const [row] = await db.insert(publishingAccounts).values({ name: body.name, phoneNumber: body.phoneNumber, phoneNumberId: body.phoneNumberId, businessAccountId: body.businessAccountId, accessTokenEncrypted: encryptSecret(tokenPayload.access_token), connectionProvider: "meta_embedded_signup", status: "connected", lastConnectedAt: new Date(), lastActivityAt: new Date(), dailyLimit: body.dailyLimit, priority: body.priority, createdBy: req.user?.sub }).returning({ id: publishingAccounts.id, name: publishingAccounts.name, phoneNumber: publishingAccounts.phoneNumber, status: publishingAccounts.status, lastConnectedAt: publishingAccounts.lastConnectedAt, createdAt: publishingAccounts.createdAt });
+  return res.status(201).json({ success:true, data: row });
 }

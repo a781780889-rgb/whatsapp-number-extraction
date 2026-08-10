@@ -22,4 +22,14 @@
 
 شغّل `npm run typecheck` و`npm run build` في المجلدين. اختبارات قاعدة البيانات تحتاج PostgreSQL وRedis قيد التشغيل؛ بيئة التنفيذ الحالية لا تحتوي على Docker، لذلك تم التحقق من اختبارات الوحدات التي لا تتطلب قاعدة بيانات ومن بناء TypeScript/Vite.
 
+## ربط الحسابات من لوحة التحكم
+
+زر **إضافة حساب WhatsApp** يطلق تدفق **Meta Embedded Signup v4** الرسمي. يجب ضبط `META_APP_ID` و`META_APP_SECRET` و`META_EMBEDDED_SIGNUP_CONFIG_ID` و`META_EMBEDDED_SIGNUP_REDIRECT_URI` في الخادم، وإضافة نطاق لوحة التحكم إلى إعدادات OAuth وAllowed Domains في تطبيق Meta. لا ينشئ التطبيق QR بنفسه؛ إذا كان حساب WhatsApp Business مؤهلاً لـ Coexistence، فإن QR أو رمز التحقق يظهر داخل تجربة Meta الرسمية، ثم تعيد Meta رمز التفويض ومعرّفات WABA ورقم الهاتف إلى التطبيق.
+
+بعد اكتمال التدفق، يرسل الخادم رمز التفويض إلى Graph API لتبادل الرمز Access Token server-side، ثم يخزن الرمز مشفراً ولا يعرضه للمتصفح. كل سجل حساب يملك `phone_number_id` و`business_account_id` وحالة اتصال مستقلة. يجب تطبيق migration الجديد قبل تشغيل الإصدار.
+
+> لا تستخدم Baileys أو Puppeteer أو جلسات WhatsApp Web لهذا المسار. هذه الأدوات لا تمثل تدفق WhatsApp Business Platform الرسمي، ولا ينبغي استخدامها لإرسال حملات من هذا النظام.
+
+توضح Meta أن Embedded Signup v2 سيُهمَل في 15 أكتوبر 2026؛ لذلك يستخدم هذا التحديث إعداد v4 ولا يعتمد على تدفق v2. راجع [توثيق Embedded Signup الرسمي](https://developers.facebook.com/documentation/business-messaging/whatsapp/embedded-signup/implementation) و[توثيق Coexistence الرسمي](https://developers.facebook.com/documentation/business-messaging/whatsapp/embedded-signup/onboarding-business-app-users).
+
 المراجع الرسمية: [Meta — About the WhatsApp Business Platform](https://developers.facebook.com/documentation/business-messaging/whatsapp/about-the-platform)، [Meta — Webhooks](https://developers.facebook.com/documentation/business-messaging/whatsapp/webhooks/overview)، [Meta — Send Messages](https://developers.facebook.com/documentation/business-messaging/whatsapp/messages/send-messages).

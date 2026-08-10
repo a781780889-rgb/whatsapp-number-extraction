@@ -36,6 +36,10 @@ const envSchema = z.object({
   AUTH_RATE_LIMIT_MAX: z.coerce.number().int().positive().default(10),
   WHATSAPP_API_VERSION: z.string().default('v23.0'),
   WHATSAPP_GRAPH_API_BASE_URL: z.string().url().default('https://graph.facebook.com'),
+  META_APP_ID: z.string().default(''),
+  META_APP_SECRET: z.string().default(''),
+  META_EMBEDDED_SIGNUP_CONFIG_ID: z.string().default(''),
+  META_EMBEDDED_SIGNUP_REDIRECT_URI: z.string().url().or(z.literal('')).default(''),
 });
 
 function loadEnv() {

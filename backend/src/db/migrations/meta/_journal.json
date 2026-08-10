@@ -15,6 +15,13 @@
       "when": 1786322883567,
       "tag": "0001_wakeful_raza",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1786323848029,
+      "tag": "0002_square_rafael_vega",
+      "breakpoints": true
     }
   ]
 }
