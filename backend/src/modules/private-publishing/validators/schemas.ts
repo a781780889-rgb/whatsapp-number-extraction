@@ -47,8 +47,6 @@ export const createAccountSchema = z.object({
   phoneNumberId: z.string().trim().min(2).max(128),
   businessAccountId: z.string().trim().min(2).max(128),
   accessToken: z.string().trim().min(20),
-  dailyLimit: z.number().int().min(1).max(100000).default(100),
-  priority: z.number().int().min(0).max(100).default(0),
 });
 
 export const embeddedSignupSchema = z.object({
@@ -57,6 +55,4 @@ export const embeddedSignupSchema = z.object({
   phoneNumber: z.string().trim().min(8).max(32),
   phoneNumberId: z.string().trim().min(2).max(128),
   businessAccountId: z.string().trim().min(2).max(128),
-  dailyLimit: z.number().int().min(1).max(100000).default(100),
-  priority: z.number().int().min(0).max(100).default(0),
 });

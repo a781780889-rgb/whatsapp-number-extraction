@@ -90,9 +90,7 @@ export async function listAccounts(_req: Request, res: Response) {
         sentCount: publishingAccounts.sentCount,
         successCount: publishingAccounts.successCount,
         failedCount: publishingAccounts.failedCount,
-        dailyLimit: publishingAccounts.dailyLimit,
         lastActivityAt: publishingAccounts.lastActivityAt,
-        priority: publishingAccounts.priority,
       })
       .from(publishingAccounts)
       .orderBy(desc(publishingAccounts.createdAt)),
@@ -223,7 +221,7 @@ export async function completeEmbeddedSignup(req: Request, res: Response) {
   if (!env.META_APP_ID || !env.META_APP_SECRET) {
     return res.status(503).json({ success: false, error: { message: "Meta Embedded Signup غير مهيأ على الخادم" } });
   }
-  const body = req.body as { code:string; name:string; phoneNumber:string; phoneNumberId:string; businessAccountId:string; dailyLimit:number; priority:number };
+  const body = req.body as { code:string; name:string; phoneNumber:string; phoneNumberId:string; businessAccountId:string };
   const tokenUrl = new URL(`${env.WHATSAPP_GRAPH_API_BASE_URL}/${env.WHATSAPP_API_VERSION}/oauth/access_token`);
   tokenUrl.searchParams.set("client_id", env.META_APP_ID);
   tokenUrl.searchParams.set("client_secret", env.META_APP_SECRET);
@@ -231,6 +229,6 @@ export async function completeEmbeddedSignup(req: Request, res: Response) {
   const tokenResponse = await fetch(tokenUrl);
   const tokenPayload = await tokenResponse.json() as { access_token?: string; error?: { message?: string } };
   if (!tokenResponse.ok || !tokenPayload.access_token) return res.status(502).json({ success:false, error:{ message: tokenPayload.error?.message ?? "تعذر إكمال مصادقة Meta" } });
-  const [row] = await db.insert(publishingAccounts).values({ name: body.name, phoneNumber: body.phoneNumber, phoneNumberId: body.phoneNumberId, businessAccountId: body.businessAccountId, accessTokenEncrypted: encryptSecret(tokenPayload.access_token), connectionProvider: "meta_embedded_signup", status: "connected", lastConnectedAt: new Date(), lastActivityAt: new Date(), dailyLimit: body.dailyLimit, priority: body.priority, createdBy: req.user?.sub }).returning({ id: publishingAccounts.id, name: publishingAccounts.name, phoneNumber: publishingAccounts.phoneNumber, status: publishingAccounts.status, lastConnectedAt: publishingAccounts.lastConnectedAt, createdAt: publishingAccounts.createdAt });
+  const [row] = await db.insert(publishingAccounts).values({ name: body.name, phoneNumber: body.phoneNumber, phoneNumberId: body.phoneNumberId, businessAccountId: body.businessAccountId, accessTokenEncrypted: encryptSecret(tokenPayload.access_token), connectionProvider: "meta_embedded_signup", status: "connected", lastConnectedAt: new Date(), lastActivityAt: new Date(), createdBy: req.user?.sub }).returning({ id: publishingAccounts.id, name: publishingAccounts.name, phoneNumber: publishingAccounts.phoneNumber, status: publishingAccounts.status, lastConnectedAt: publishingAccounts.lastConnectedAt, createdAt: publishingAccounts.createdAt });
   return res.status(201).json({ success:true, data: row });
 }

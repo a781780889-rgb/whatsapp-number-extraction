@@ -368,8 +368,6 @@ export const publishingAccounts = pgTable(
     sentCount: integer("sent_count").notNull().default(0),
     successCount: integer("success_count").notNull().default(0),
     failedCount: integer("failed_count").notNull().default(0),
-    dailyLimit: integer("daily_limit").notNull().default(100),
-    priority: integer("priority").notNull().default(0),
     createdBy: uuid("created_by").references(() => users.id, {
       onDelete: "set null",
     }),
